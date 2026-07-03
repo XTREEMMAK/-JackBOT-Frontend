@@ -1,12 +1,12 @@
 import { json } from '@sveltejs/kit';
-import { WEBHOOK_URL } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 export async function POST({ request, cookies }) {
     try {
         const body = await request.json();
         const { message, timestamp, user } = body;
 
         // Forward to the actual webhook
-        const webhookResponse = await fetch(WEBHOOK_URL, {
+        const webhookResponse = await fetch(env.WEBHOOK_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

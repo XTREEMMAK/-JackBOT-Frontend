@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import { env } from '$env/dynamic/public';
 	import Header from '$lib/components/layout/Header.svelte';
 	import ChatWindow from '$lib/components/chat/ChatWindow.svelte';
 	import QuotesRotator from '$lib/components/ui/QuotesRotator.svelte';
@@ -34,8 +35,8 @@
 </script>
 
 <svelte:head>
-	<title>{import.meta.env.PUBLIC_APP_NAME} - The Pirate Assistant</title>
-	<meta name="description" content="{import.meta.env.PUBLIC_APP_DESCRIPTION}" />
+	<title>{env.PUBLIC_APP_NAME} - The Pirate Assistant</title>
+	<meta name="description" content="{env.PUBLIC_APP_DESCRIPTION}" />
 </svelte:head>
 
 {#if isLoaded}
