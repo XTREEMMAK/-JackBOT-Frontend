@@ -1,0 +1,267 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+/* Custom scrollbar styles */
+@layer utilities {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(240 176 52) rgba(156 163 175 / 0.3);
+  }
+  
+  .dark .custom-scrollbar {
+    scrollbar-color: rgb(240 176 52) rgba(55 65 81 / 0.3);
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(156, 163, 175, 0.2);
+    border-radius: 4px;
+  }
+  
+  .dark .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(55, 65, 81, 0.3);
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, rgb(240, 176, 52), rgb(255, 193, 71));
+    border-radius: 4px;
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, rgb(255, 193, 71), rgb(240, 176, 52));
+  }
+
+  /* Typing indicator bounce animation */
+  @keyframes typing-bounce {
+    0%, 80%, 100% {
+      transform: scale(0.8);
+      opacity: 0.5;
+    }
+    40% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  .animate-typing-bounce {
+    animation: typing-bounce 1.4s infinite ease-in-out;
+  }
+  
+  .animate-typing-bounce:nth-child(1) {
+    animation-delay: 0ms;
+  }
+  
+  .animate-typing-bounce:nth-child(2) {
+    animation-delay: 150ms;
+  }
+  
+  .animate-typing-bounce:nth-child(3) {
+    animation-delay: 300ms;
+  }
+
+  /* Message speaker indicator animation */
+  @keyframes pulse-scale {
+    0%, 100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.3);
+    }
+  }
+  
+  .animate-pulse-scale {
+    animation: pulse-scale 2s infinite;
+  }
+
+  /* Custom shadow utilities for speaker indicators */
+  .shadow-blue-glow {
+    box-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+  }
+  
+  .shadow-purple-glow {
+    box-shadow: 0 0 8px rgba(240, 176, 52, 0.6);
+  }
+
+  /* Header logo float animation */
+  @keyframes float {
+    0%, 100% { 
+      transform: translateY(0px) rotate(0deg) scale(1);
+    }
+    50% { 
+      transform: translateY(-15px) rotate(3deg) scale(1.03);
+    }
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Animated gradient backgrounds */
+  @keyframes gradient-shift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+  
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 8s ease infinite;
+  }
+
+  /* Message content styling */
+  .message-content {
+    line-height: 1.5;
+  }
+  
+  .message-content br {
+    line-height: 0.8;
+    margin: 2px 0;
+  }
+  
+  .message-content ul, .message-content ol {
+    margin: 8px 0;
+    padding-left: 20px;
+  }
+  
+  .message-content li {
+    margin: 4px 0;
+  }
+  
+  .message-content ul {
+    list-style-type: disc;
+  }
+  
+  .message-content ol {
+    list-style-type: decimal;
+  }
+  
+  .message-content p {
+    margin: 6px 0;
+  }
+  
+  .message-content a {
+    transition: color 0.3s ease;
+  }
+  
+  .message-content a:hover {
+    color: rgb(240, 176, 52);
+  }
+
+  /* Bot profile picture animation */
+  @keyframes border-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.8);
+      opacity: 0;
+    }
+  }
+  
+  .animate-border-pulse {
+    animation: border-pulse 2s ease-out infinite;
+  }
+
+  /* Mobile touch improvements */
+  .touch-target-mobile {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Mobile viewport optimizations */
+  .mobile-safe-area {
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  /* Landscape orientation support */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .mobile-safe-area {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+  }
+
+  /* Screen reader only content */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .focus\:not-sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0.5rem 1rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #000;
+    }
+    
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #fff;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-bounce,
+    .animate-spin,
+    .animate-typing-bounce,
+    .animate-pulse-scale,
+    .animate-float {
+      animation: none;
+    }
+    
+    * {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Global font and base styles */
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply antialiased;
+  }
+  
+  * {
+    @apply border-gray-600;
+  }
+  
+  /* Dark mode support */
+  .dark {
+    color-scheme: dark;
+  }
+}

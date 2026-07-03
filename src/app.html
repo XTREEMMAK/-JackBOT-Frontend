@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="%sveltekit.assets%/favicon.ico" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+		
+		<!-- PWA Meta Tags -->
+		<meta name="theme-color" content="%env.PUBLIC_THEME_COLOR%" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="apple-mobile-web-app-title" content="%env.PUBLIC_APP_NAME%" />
+		<meta name="application-name" content="%env.PUBLIC_APP_NAME%" />
+		<meta name="msapplication-TileColor" content="%env.PUBLIC_THEME_COLOR%" />
+		<meta name="msapplication-config" content="/browserconfig.xml" />
+		
+		<!-- Manifest -->
+		<link rel="manifest" href="/manifest.json" />
+		
+		<!-- Apple Touch Icons -->
+		<link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
+		
+		<!-- Favicon -->
+		<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16x16.png" />
+		
+		%sveltekit.head%
+	</head>
+	<body data-sveltekit-preload-data="hover" class="bg-gray-900 text-white">
+		<div style="display: contents">%sveltekit.body%</div>
+		
+		<!-- Service Worker Registration -->
+		<script>
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', function() {
+					navigator.serviceWorker.register('/sw.js')
+						.then(function(registration) {
+							console.log('[PWA] Service Worker registered successfully:', registration.scope);
+							
+							// Check for updates
+							registration.addEventListener('updatefound', () => {
+								const newWorker = registration.installing;
+								newWorker.addEventListener('statechange', () => {
+									if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+										// New content available, reload page
+										if (confirm('New version available! Reload to update?')) {
+											window.location.reload();
+										}
+									}
+								});
+							});
+						})
+						.catch(function(registrationError) {
+							console.error('[PWA] Service Worker registration failed:', registrationError);
+						});
+				});
+			}
+			
+			// Handle PWA install prompt
+			let deferredPrompt;
+			window.addEventListener('beforeinstallprompt', (e) => {
+				e.preventDefault();
+				deferredPrompt = e;
+				console.log('[PWA] Install prompt available');
+			});
+			
+			// Network status handling
+			window.addEventListener('online', () => {
+				console.log('[PWA] Back online');
+				document.body.classList.remove('offline');
+			});
+			
+			window.addEventListener('offline', () => {
+				console.log('[PWA] Gone offline');
+				document.body.classList.add('offline');
+			});
+		</script>
+	</body>
+</html>
