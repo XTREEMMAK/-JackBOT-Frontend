@@ -54,12 +54,16 @@ You can preview the production build with `npm run preview`.
 
 ## Deployment
 
-JackBOT-Frontend ships as a Docker image, built and published automatically to Docker Hub by the `docker-publish.yml` GitHub Actions workflow on every push to `main` (or via manual `workflow_dispatch`). Provisioning and running the container on the target host is owned by a separate Ansible playbook, not by this repository — this repo's only job is to produce a correct, environment-agnostic image.
+JackBOT-Frontend ships as a Docker image, built and published automatically to the GitHub Container Registry (ghcr.io) by the `docker-publish.yml` GitHub Actions workflow on every push to `main` (or via manual `workflow_dispatch`). Provisioning and running the container on the target host is owned by a separate Ansible playbook, not by this repository — this repo's only job is to produce a correct, environment-agnostic image.
+
+No repo secrets are required for this workflow — it authenticates to `ghcr.io` using the automatically-provided `GITHUB_TOKEN`.
+
+> **One-time setup:** after the first successful workflow run, open the package's settings under the repo's (or `xtreemmak` account's) Packages tab and set its visibility to **Public**. Packages published via `GITHUB_TOKEN` default to private, and the Ansible playbook needs to `docker pull` without authenticating.
 
 ### Image
 
 ```
-docker pull <dockerhub-username>/jackbot-frontend:latest
+docker pull ghcr.io/xtreemmak/jackbot-frontend:latest
 ```
 
 Tags published: `latest` (tracks `main`) and `sha-<short-git-sha>` (immutable, one per build).
