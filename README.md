@@ -54,11 +54,42 @@ You can preview the production build with `npm run preview`.
 
 ## Deployment
 
-To deploy JackBOT-Frontend, follow these steps:
+JackBOT-Frontend ships as a Docker image, built and published automatically to Docker Hub by the `docker-publish.yml` GitHub Actions workflow on every push to `main` (or via manual `workflow_dispatch`). Provisioning and running the container on the target host is owned by a separate Ansible playbook, not by this repository — this repo's only job is to produce a correct, environment-agnostic image.
 
-1. Copy `package.json` and `package-lock.json` to your deployment environment
-2. Set up your environment variables in a `.env` file
-3. Install dependencies with `npm install`
-4. Build the production version with `npm run build`
+### Image
 
-> The app uses the Node.js adapter for server-side deployment. Make sure your deployment environment supports Node.js.
+```
+docker pull <dockerhub-username>/jackbot-frontend:latest
+```
+
+Tags published: `latest` (tracks `main`) and `sha-<short-git-sha>` (immutable, one per build).
+
+### Required runtime environment variables
+
+The image bakes in nothing environment-specific — every value below is read from the container's environment at startup or per-request, so the same image works in any environment just by changing how it's run.
+
+| Variable | Required | Notes |
+| --- | --- | --- |
+| `WEBHOOK_URL` | yes | Backend webhook endpoint the chat forwards messages to. Server-side only, never sent to the browser. |
+| `PUBLIC_APP_NAME` | yes | Shown in the page title and PWA meta tags. |
+| `PUBLIC_APP_DESCRIPTION` | yes | Used for the page `<meta name="description">`. |
+| `PUBLIC_THEME_COLOR` | yes | Used for `theme-color`/`msapplication-TileColor` meta tags, e.g. `#f0b034`. |
+| `PORT` | no | Port the Node server listens on. Defaults to `3000`. |
+| `HOST` | no | Interface to bind. Defaults to `0.0.0.0`. |
+| `ORIGIN` | strongly recommended in production | Set to the public URL (e.g. `https://chat.example.com`) whenever the app sits behind a reverse proxy/load balancer. SvelteKit's CSRF origin check needs this to accept the chat `POST` request to `/api/webhook`; without it, requests can be rejected once the container isn't reached directly on its own hostname. |
+| `BODY_SIZE_LIMIT` | no | adapter-node request body size limit override. |
+
+See [`@sveltejs/adapter-node`'s environment variables](https://svelte.dev/docs/kit/adapter-node#environment-variables) for the full list adapter-node reads (all unprefixed, straight from `process.env`).
+
+### Local development / smoke-testing with Docker
+
+A minimal `docker-compose.yml` is included purely for local convenience — it is not used by CI and is not what the production Ansible playbook uses:
+
+```bash
+cp .env.example .env   # fill in real values
+docker compose up --build
+```
+
+### Production
+
+The production host pulls and runs the published image via this project's Ansible playbook, which supplies the environment variables above (e.g. via a templated env file or Ansible Vault) and owns real orchestration concerns (restart policy, reverse proxy, TLS, health checks). This repository's responsibility ends at "produces a working image."
