@@ -19,8 +19,16 @@ export async function POST({ request, cookies }) {
         });
 
         if (webhookResponse.ok) {
-            const data = await webhookResponse.json();
-            
+            const rawBody = await webhookResponse.text();
+            let data = {};
+            if (rawBody) {
+                try {
+                    data = JSON.parse(rawBody);
+                } catch {
+                    // Webhook responded 200 with a non-JSON body; fall back below
+                }
+            }
+
             // Return the webhook response or generate a pirate-themed response
             return json({
                 reply: data.reply || generatePirateResponse(message),
