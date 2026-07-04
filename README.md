@@ -1,4 +1,4 @@
-![JackBot Logo](https://jackbot.kjnet.us/images/JackBot_logo.webp)
+![JackBot Logo](static/images/JackBot_logo.webp)
 
 # JackBOT-Frontend
 
