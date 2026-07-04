@@ -66,12 +66,35 @@
 					user: 'anonymous'
 				})
 			});
-			
+
 			const typingTime = 1000 + Math.random() * 2000;
-			
-			if (response.ok) {
+
+			// Our own /api/webhook route always replies with JSON. If we get
+			// something else back - a redirect landed on it, or the status is
+			// 401/403 - a reverse-proxy auth gate (e.g. an expired SSO
+			// session) intercepted the request before it ever reached our
+			// server code, not a real webhook/connection failure.
+			const contentType = response.headers.get('content-type') || '';
+			const isAuthIntercept = response.redirected
+				|| response.status === 401
+				|| response.status === 403
+				|| !contentType.includes('application/json');
+
+			if (isAuthIntercept) {
+				chat.updateMessageStatus(messageId, 'failed');
+
+				setTimeout(() => {
+					chat.setTyping(false);
+					chat.addMessage({
+						text: "Arrr, yer session has run its course! Refresh the page to sign back in, then send that message again.",
+						isUser: false,
+						timestamp: new Date().toISOString(),
+						status: 'received'
+					});
+				}, typingTime);
+			} else if (response.ok) {
 				const data = await response.json();
-				
+
 				setTimeout(() => {
 					chat.setTyping(false);
 					chat.addMessage({
@@ -84,7 +107,7 @@
 			} else {
 				// Mark user message as failed
 				chat.updateMessageStatus(messageId, 'failed');
-				
+
 				// Fallback response
 				setTimeout(() => {
 					chat.setTyping(false);
